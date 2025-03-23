@@ -1,0 +1,1 @@
+INSERT INTO tb_user (password, email) VALUES ('pass123', 'UserTest@gmail.com');
