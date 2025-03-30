@@ -39,6 +39,19 @@ public class User implements UserDetails {
         this.password = encryptedPassord;
     }
 
+    public User(@NotBlank String email, String encryptedPassord) {
+        this.email = email;
+        this.password = encryptedPassord;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
