@@ -1,4 +1,4 @@
-# PIA3A Backend
+# API3A Backend
 
 Este é o repositório do backend da aplicação **API3A**, uma API REST simples desenvolvida com Java e Spring Boot.
 
