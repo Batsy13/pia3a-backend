@@ -26,10 +26,15 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private String password;
     private String email;
 
-    public User(@NotBlank String email, String encryptedPassord) {
+    public User() {
+    }
+
+    public User(@NotBlank String name, @NotBlank String email, String encryptedPassord) {
+        this.name = name;
         this.email = email;
         this.password = encryptedPassord;
     }
