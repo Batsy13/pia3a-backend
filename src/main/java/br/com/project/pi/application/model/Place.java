@@ -27,6 +27,6 @@ public class Place {
 
     @ManyToOne
     @JoinColumn(name = "list_id")
-    private List list;
+    private Lists list;
 
 }

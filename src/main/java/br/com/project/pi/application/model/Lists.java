@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_list")
-public class List {
+public class Lists {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
