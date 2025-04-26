@@ -26,4 +26,8 @@ public class Lists {
     @OneToMany(mappedBy = "list", orphanRemoval = true, cascade = CascadeType.ALL)
     private java.util.List<Place> places = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

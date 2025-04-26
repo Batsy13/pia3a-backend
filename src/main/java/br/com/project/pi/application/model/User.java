@@ -8,6 +8,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "tb_user")
-@Entity(name = "usuario")
+@Entity()
 public class User implements UserDetails {
 
     @Id
@@ -25,6 +26,9 @@ public class User implements UserDetails {
     private String name;
     private String password;
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Lists> list = new ArrayList<>();
 
     public User() {
     }
