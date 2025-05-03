@@ -1,10 +1,9 @@
 package br.com.project.pi.application.dto;
 
-import br.com.project.pi.application.model.Place;
-
 public record ListsDTO(
+        Long id,
         String name,
         String icon,
-        Place place) {
+        java.util.List<PlaceDTO> place) {
 
 }
