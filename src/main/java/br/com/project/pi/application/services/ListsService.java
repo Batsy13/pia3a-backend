@@ -2,6 +2,7 @@ package br.com.project.pi.application.services;
 
 import br.com.project.pi.application.dto.ListsDTO;
 import br.com.project.pi.application.dto.PlaceDTO;
+import br.com.project.pi.application.model.Lists;
 import br.com.project.pi.application.repositories.ListsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,11 @@ public class ListsService {
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ListsDTO findById(Long id) {
+        Lists list = repository.findById(id).get();
+        return new ListsDTO(list);
     }
 }
