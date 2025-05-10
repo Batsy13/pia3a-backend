@@ -29,8 +29,6 @@ public class Place {
     @JoinColumn(name = "list_id")
     private Lists list;
 
-    public Place() {
-    }
 
     public Place(LocalDateTime addedAt, String description, Long id, byte[] image, Lists list, String name) {
         this.addedAt = addedAt;

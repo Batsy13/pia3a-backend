@@ -1,6 +1,8 @@
 package br.com.project.pi.application.model;
 
 
+import br.com.project.pi.application.dto.CreatedListRequest;
+import br.com.project.pi.application.dto.ListsDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +31,26 @@ public class Lists {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    public Lists(String icon, Long id, String name, List<Place> places, User user) {
+        this.icon = icon;
+        this.id = id;
+        this.name = name;
+        this.places = places;
+        this.user = user;
+    }
+
+    public Lists(ListsDTO list) {
+        this.id = list.id();
+        this.name = list.name();
+        this.icon = list.icon();
+    }
+
+    public Lists(CreatedListRequest list) {
+        this.name = list.name();
+        this.icon = list.icon();
+    }
 
     public String getIcon() {
         return icon;
