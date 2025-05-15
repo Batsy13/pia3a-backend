@@ -1,7 +1,7 @@
 package br.com.project.pi.application.model;
 
 
-import br.com.project.pi.application.dto.CreatedListRequest;
+import br.com.project.pi.application.dto.CreatedListRequestDTO;
 import br.com.project.pi.application.dto.ListsDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -26,12 +28,13 @@ public class Lists {
     private String icon;
 
     @OneToMany(mappedBy = "list", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private java.util.List<Place> places;
+    private List<Place> places = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public Lists(){}
 
     public Lists(String icon, Long id, String name, List<Place> places, User user) {
         this.icon = icon;
@@ -47,9 +50,23 @@ public class Lists {
         this.icon = list.icon();
     }
 
-    public Lists(CreatedListRequest list) {
+    public Lists(CreatedListRequestDTO list) {
         this.name = list.name();
         this.icon = list.icon();
+        if(list.place() != null){
+            this.places = list.place().stream().map(p -> {
+                Place place = new Place();
+                place.setName(p.name());
+                place.setDescription(p.description());
+                place.setImage(p.image());
+                place.setAddedAt(p.addedAt());
+                place.setList(this);
+                return place;
+            }).collect(Collectors.toList());
+        }
+        else {
+            this.places = new ArrayList<>();
+        }
     }
 
     public String getIcon() {
@@ -82,5 +99,13 @@ public class Lists {
 
     public void setPlaces(List<Place> places) {
         this.places = places;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
