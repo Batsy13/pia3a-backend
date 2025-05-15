@@ -3,6 +3,7 @@ package br.com.project.pi.application.controllers;
 import br.com.project.pi.application.dto.AuthenticationDTO;
 import br.com.project.pi.application.dto.EmailResponseDTO;
 import br.com.project.pi.application.dto.RegisterDTO;
+import br.com.project.pi.application.exception.EmailAlreadyExistsException;
 import br.com.project.pi.application.infra.segurity.TokenService;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.UserRepository;
@@ -44,6 +45,10 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
+
+        if (repository.findByEmail(data.email()).isPresent()) {
+            throw new EmailAlreadyExistsException();
+        }
 
         String encryptedPassord = new BCryptPasswordEncoder().encode(data.password()); /// GUARDA UMA SENHA CRIPTOGRAFADA
 
