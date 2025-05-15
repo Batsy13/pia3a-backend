@@ -29,9 +29,10 @@ public class TokenService {
             return token;
         }catch (JWTCreationException exception){
             throw new RuntimeException("Error while generating token", exception);
-
         }
     }
+
+
 
     public String validateToken(String token){
         try{
