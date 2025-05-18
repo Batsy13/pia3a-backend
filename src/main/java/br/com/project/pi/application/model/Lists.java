@@ -6,7 +6,6 @@ import br.com.project.pi.application.dto.ListsDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
 @Table(name = "tb_list")
 public class Lists {

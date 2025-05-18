@@ -8,4 +8,5 @@ import java.util.List;
 public interface ListsRepository extends JpaRepository<Lists, Long> {
 
     List<Lists> findAll();
+    boolean existsByName(String name);
 }

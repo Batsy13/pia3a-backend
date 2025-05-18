@@ -4,12 +4,13 @@ import br.com.project.pi.application.dto.AuthenticationDTO;
 import br.com.project.pi.application.dto.EmailResponseDTO;
 import br.com.project.pi.application.dto.RegisterDTO;
 import br.com.project.pi.application.exception.EmailAlreadyExistsException;
+import br.com.project.pi.application.exception.PasswordIncorrectException;
+import br.com.project.pi.application.exception.UserNotFoundException;
 import br.com.project.pi.application.infra.segurity.TokenService;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,12 +37,17 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
-        try {
+
+        var userOptional = repository.findByEmail(data.email());
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException();
+        }
             var authenticationToken = new UsernamePasswordAuthenticationToken(
                     data.email(),
                     data.password()
             );
-
+        try {
             var authentication = authenticationManager.authenticate(authenticationToken);
 
             var user = (User) authentication.getPrincipal();
@@ -49,10 +55,9 @@ public class AuthenticationController {
 
             return ResponseEntity.ok(new EmailResponseDTO(token));
 
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Credenciais inválidas");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao autenticar");
+        }
+        catch (BadCredentialsException e) {
+            throw new PasswordIncorrectException();
         }
     }
 
