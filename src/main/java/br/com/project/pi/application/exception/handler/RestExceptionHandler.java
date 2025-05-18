@@ -1,8 +1,6 @@
 package br.com.project.pi.application.exception.handler;
 
-import br.com.project.pi.application.exception.EmailAlreadyExistsException;
-import br.com.project.pi.application.exception.ListNotFoundException;
-import br.com.project.pi.application.exception.UserNotFoundException;
+import br.com.project.pi.application.exception.*;
 import br.com.project.pi.application.exception.model.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,8 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({
             ListNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            ListsNotFoundException.class
     })
     public ResponseEntity<ApiError> notFoundException(RuntimeException ex) {
         ApiError apiError = ApiError
@@ -44,7 +43,8 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ExceptionHandler({EmailAlreadyExistsException.class,
+                        ListNameAlreadyExistsException.class})
     public ResponseEntity<ApiError> emailExistsException(RuntimeException ex) {
         ApiError apiError = ApiError
                 .builder()
@@ -54,6 +54,18 @@ public class RestExceptionHandler {
                 .errors(List.of(ex.getMessage()))
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(PasswordIncorrectException.class)
+    public ResponseEntity<ApiError> senhaIncorretaException(PasswordIncorrectException ex) {
+        ApiError apiError = ApiError
+                .builder()
+                .timestamp(LocalDateTime.now())
+                .code(HttpStatus.FORBIDDEN.value())
+                .status(HttpStatus.FORBIDDEN.name())
+                .errors(List.of(ex.getMessage()))
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
