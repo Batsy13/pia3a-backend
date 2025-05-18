@@ -1,12 +1,13 @@
 package br.com.project.pi.application.dto;
 
 import br.com.project.pi.application.model.Lists;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
 public record CreatedListRequestDTO(
-        String name,
-        String icon,
+        @NotBlank String name,
+        @NotBlank String icon,
         List<CreatedListPlaceDTO> place
 ) {
     public CreatedListRequestDTO(Lists list) {
