@@ -11,4 +11,7 @@ public interface ListsRepository extends JpaRepository<Lists, Long> {
 
     @Override
     void deleteById(Long id);
+
+    boolean existsByName(String name);
+
 }

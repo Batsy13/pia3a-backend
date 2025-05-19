@@ -3,6 +3,10 @@ package br.com.project.pi.application.services;
 import br.com.project.pi.application.dto.CreatedListRequestDTO;
 import br.com.project.pi.application.dto.ListsDTO;
 import br.com.project.pi.application.dto.PlaceDTO;
+import br.com.project.pi.application.exception.ListNameAlreadyExistsException;
+import br.com.project.pi.application.exception.ListNotFoundException;
+import br.com.project.pi.application.exception.ListsNotFoundException;
+import br.com.project.pi.application.exception.UserNotFoundException;
 import br.com.project.pi.application.model.Lists;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
@@ -11,7 +15,6 @@ import jakarta.transaction.Transactional;
 import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -29,7 +32,12 @@ public class ListsService {
 
     @Transactional
     public List<ListsDTO> findAll() {
-        return repository.findAll().stream()
+        var lists = repository.findAll();
+
+        if (lists.isEmpty()) {
+            throw new ListsNotFoundException();
+        }
+        return lists.stream()
                 .map(list -> new ListsDTO(
                         list.getId(),
                         list.getName(),
@@ -49,13 +57,18 @@ public class ListsService {
 
     @Transactional
     public ListsDTO findById(Long id) {
-        Lists list = repository.findById(id).get();
+        Lists list = repository.findById(id)
+                .orElseThrow(() -> new ListNotFoundException());
         return new ListsDTO(list);
     }
 
     @Transactional
     public CreatedListRequestDTO createdListsPlace(CreatedListRequestDTO dto){
         User user = getAuthenticatedUser();
+
+        if (repository.existsByName(dto.name())) {
+            throw new ListNameAlreadyExistsException(dto.name());
+        }
 
         Lists list = new Lists(dto);
         list.setUser(user);
@@ -68,7 +81,7 @@ public class ListsService {
         String authentication = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return userRepository.findByEmail(authentication)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     @Transactional
