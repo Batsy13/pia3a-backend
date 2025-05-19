@@ -8,4 +8,7 @@ import java.util.List;
 public interface ListsRepository extends JpaRepository<Lists, Long> {
 
     List<Lists> findAll();
+
+    @Override
+    void deleteById(Long id);
 }

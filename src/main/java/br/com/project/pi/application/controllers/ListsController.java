@@ -32,5 +32,10 @@ public class ListsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(list);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteListById(@PathVariable Long id) throws Exception {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

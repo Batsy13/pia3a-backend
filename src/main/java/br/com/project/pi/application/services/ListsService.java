@@ -8,11 +8,13 @@ import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
 import br.com.project.pi.application.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,5 +69,15 @@ public class ListsService {
 
         return userRepository.findByEmail(authentication)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+    }
+
+    @Transactional
+    public void deleteById(Long id) throws Exception {
+        User user = getAuthenticatedUser();
+        Lists list = repository.findById(id).orElseThrow(() -> new ExecutionException("Not found id: " + id));
+        if(!list.getUser().getId().equals(user.getId())){
+            throw new AccessDeniedException("You do not have permission to delete this list.");
+        }
+        repository.delete(list);
     }
 }
