@@ -45,7 +45,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler({EmailAlreadyExistsException.class,
                         ListNameAlreadyExistsException.class})
-    public ResponseEntity<ApiError> emailExistsException(RuntimeException ex) {
+    public ResponseEntity<ApiError> conflictException(RuntimeException ex) {
         ApiError apiError = ApiError
                 .builder()
                 .timestamp(LocalDateTime.now())
@@ -56,8 +56,9 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(PasswordIncorrectException.class)
-    public ResponseEntity<ApiError> senhaIncorretaException(PasswordIncorrectException ex) {
+    @ExceptionHandler({PasswordIncorrectException.class,
+            AccessDeniedDeleteListException.class})
+    public ResponseEntity<ApiError> forbiddenExceptionHandler(RuntimeException ex) {
         ApiError apiError = ApiError
                 .builder()
                 .timestamp(LocalDateTime.now())
@@ -66,6 +67,28 @@ public class RestExceptionHandler {
                 .errors(List.of(ex.getMessage()))
                 .build();
         return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidTokenException(InvalidTokenException ex) {
+        ApiError apiError = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .code(HttpStatus.FORBIDDEN.value())
+                .status(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .errors(List.of(ex.getMessage()))
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MissingTokenException.class)
+    public ResponseEntity<ApiError> handleMissingTokenException(MissingTokenException ex) {
+        ApiError apiError = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .status(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .errors(List.of(ex.getMessage()))
+                .build();
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
