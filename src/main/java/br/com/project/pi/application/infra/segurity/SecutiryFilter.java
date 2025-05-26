@@ -19,10 +19,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class SecutiryFilter extends OncePerRequestFilter {
+
+    private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList(
+            "/api/auth/register",
+            "/api/auth/login"
+    );
 
     @Autowired
     private TokenService tokenService;
@@ -36,6 +42,10 @@ public class SecutiryFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+        if (isPublicEndpoint(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             var token = recoverToken(request);
@@ -92,5 +102,13 @@ public class SecutiryFilter extends OncePerRequestFilter {
                         .errors(List.of(ex.getMessage()))
                         .build()
         ));
+    }
+
+    private boolean isPublicEndpoint(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return PUBLIC_ENDPOINTS.stream().anyMatch(uri ->
+                requestURI.startsWith(uri.replace("/**", "")) ||
+                        requestURI.equals(uri)
+        );
     }
 }
