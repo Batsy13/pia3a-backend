@@ -1,16 +1,16 @@
 package br.com.project.pi.application.model;
 
+import br.com.project.pi.application.dto.CreatedPlaceDTO;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_place")
 @Entity
@@ -29,6 +29,7 @@ public class Place {
     @JoinColumn(name = "list_id")
     private Lists list;
 
+    public Place(){}
 
     public Place(LocalDateTime addedAt, String description, Long id, byte[] image, Lists list, String name) {
         this.addedAt = addedAt;
@@ -37,6 +38,13 @@ public class Place {
         this.image = image;
         this.list = list;
         this.name = name;
+    }
+
+    public Place(@Valid CreatedPlaceDTO dto) {
+        this.name = dto.name();
+        this.description = dto.description();
+        this.image = dto.image();
+        this.addedAt = dto.addedAt();
     }
 
     public LocalDateTime getAddedAt() {
