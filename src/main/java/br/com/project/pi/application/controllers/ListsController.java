@@ -1,6 +1,7 @@
 package br.com.project.pi.application.controllers;
 
 import br.com.project.pi.application.dto.CreatedListRequestDTO;
+import br.com.project.pi.application.dto.CreatedPlaceDTO;
 import br.com.project.pi.application.services.ListsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,4 +40,9 @@ public class ListsController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{id}/place")
+    public ResponseEntity addPlace(@RequestBody @Valid CreatedPlaceDTO dto, @PathVariable Long id){
+        var place = service.createdPlace(dto, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(place);
+    }
 }

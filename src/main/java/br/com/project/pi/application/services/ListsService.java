@@ -1,6 +1,7 @@
 package br.com.project.pi.application.services;
 
 import br.com.project.pi.application.dto.CreatedListRequestDTO;
+import br.com.project.pi.application.dto.CreatedPlaceDTO;
 import br.com.project.pi.application.dto.ListsDTO;
 import br.com.project.pi.application.dto.PlaceDTO;
 import br.com.project.pi.application.exception.ListNameAlreadyExistsException;
@@ -8,6 +9,7 @@ import br.com.project.pi.application.exception.ListNotFoundException;
 import br.com.project.pi.application.exception.ListsNotFoundException;
 import br.com.project.pi.application.exception.UserNotFoundException;
 import br.com.project.pi.application.model.Lists;
+import br.com.project.pi.application.model.Place;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
 import br.com.project.pi.application.repositories.UserRepository;
@@ -58,7 +60,7 @@ public class ListsService {
     @Transactional
     public ListsDTO findById(Long id) {
         Lists list = repository.findById(id)
-                .orElseThrow(() -> new ListNotFoundException());
+                .orElseThrow(ListNotFoundException::new);
         return new ListsDTO(list);
     }
 
@@ -77,11 +79,28 @@ public class ListsService {
         return new CreatedListRequestDTO(list);
     }
 
+    @Transactional
+    public CreatedPlaceDTO createdPlace(CreatedPlaceDTO dto, Long id) {
+        User user = getAuthenticatedUser();
+
+        Lists list = repository.findById(id).orElseThrow(() -> new ExecutionException("Not found id: " + id));
+
+        Place place = new Place(dto);
+
+        place.setList(list);
+
+        list.getPlaces().add(place);
+
+        repository.save(list);
+
+        return new CreatedPlaceDTO(place);
+    }
+
     public User getAuthenticatedUser() {
         String authentication = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return userRepository.findByEmail(authentication)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
