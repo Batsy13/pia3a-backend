@@ -4,22 +4,17 @@ import br.com.project.pi.application.dto.CreatedListRequestDTO;
 import br.com.project.pi.application.dto.CreatedPlaceDTO;
 import br.com.project.pi.application.dto.ListsDTO;
 import br.com.project.pi.application.dto.PlaceDTO;
-import br.com.project.pi.application.exception.ListNameAlreadyExistsException;
-import br.com.project.pi.application.exception.ListNotFoundException;
-import br.com.project.pi.application.exception.ListsNotFoundException;
-import br.com.project.pi.application.exception.UserNotFoundException;
+import br.com.project.pi.application.exception.*;
 import br.com.project.pi.application.model.Lists;
 import br.com.project.pi.application.model.Place;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
 import br.com.project.pi.application.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,9 +101,9 @@ public class ListsService {
     @Transactional
     public void deleteById(Long id) throws Exception {
         User user = getAuthenticatedUser();
-        Lists list = repository.findById(id).orElseThrow(() -> new ExecutionException("Not found id: " + id));
+        Lists list = repository.findById(id).orElseThrow(() -> new ListNotFoundException());
         if(!list.getUser().getId().equals(user.getId())){
-            throw new AccessDeniedException("You do not have permission to delete this list.");
+            throw new AccessDeniedDeleteListException();
         }
         repository.delete(list);
     }
