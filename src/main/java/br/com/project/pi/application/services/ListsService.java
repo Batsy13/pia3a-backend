@@ -11,6 +11,7 @@ import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
 import br.com.project.pi.application.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
