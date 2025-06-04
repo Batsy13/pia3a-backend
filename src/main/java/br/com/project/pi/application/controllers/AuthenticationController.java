@@ -3,6 +3,9 @@ package br.com.project.pi.application.controllers;
 import br.com.project.pi.application.dto.AuthenticationDTO;
 import br.com.project.pi.application.dto.EmailResponseDTO;
 import br.com.project.pi.application.dto.RegisterDTO;
+import br.com.project.pi.application.exception.EmailAlreadyExistsException;
+import br.com.project.pi.application.exception.PasswordIncorrectException;
+import br.com.project.pi.application.exception.UserNotFoundException;
 import br.com.project.pi.application.infra.segurity.TokenService;
 import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.UserRepository;
@@ -10,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,19 +36,37 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
 
-        var userNamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var auth = this.authenticationManager.authenticate(userNamePassword);
+        var userOptional = repository.findByEmail(data.email());
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+            var authenticationToken = new UsernamePasswordAuthenticationToken(
+                    data.email(),
+                    data.password()
+            );
+        try {
+            var authentication = authenticationManager.authenticate(authenticationToken);
 
-        return ResponseEntity.ok(new EmailResponseDTO(token));
+            var user = (User) authentication.getPrincipal();
+            var token = tokenService.generateToken(user);
+
+            return ResponseEntity.ok(new EmailResponseDTO(token));
+
+        }
+        catch (BadCredentialsException e) {
+            throw new PasswordIncorrectException();
+        }
     }
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-        if (this.repository.findByEmail(data.email()).isPresent()) return ResponseEntity.badRequest().build();
+
+        if (repository.findByEmail(data.email()).isPresent()) {
+            throw new EmailAlreadyExistsException();
+        }
 
         String encryptedPassord = new BCryptPasswordEncoder().encode(data.password()); /// GUARDA UMA SENHA CRIPTOGRAFADA
 

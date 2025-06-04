@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +18,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "tb_user")
-@Entity(name = "usuario")
+@Entity()
 public class User implements UserDetails {
 
     @Id
@@ -25,6 +27,11 @@ public class User implements UserDetails {
     private String name;
     private String password;
     private String email;
+    private String role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Lists> list = new ArrayList<>();
+
 
     public User() {
     }
@@ -50,7 +57,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -97,5 +104,41 @@ public class User implements UserDetails {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Lists> getList() {
+        return list;
+    }
+
+    public void setList(List<Lists> list) {
+        this.list = list;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
