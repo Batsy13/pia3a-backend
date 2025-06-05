@@ -10,7 +10,7 @@ public record PlaceDTO(
         @NotNull Long id,
         @NotBlank String name,
         @NotBlank String description,
-        @NotNull byte[] image,
+        @NotNull String image,
         @NotNull LocalDateTime addedAt
 ) {
     public PlaceDTO(Place place) {

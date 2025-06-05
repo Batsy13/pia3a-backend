@@ -22,7 +22,7 @@ public class Place {
     private Long id;
     private String name;
     private String description;
-    private byte[] image;
+    private String image;
     private LocalDateTime addedAt;
 
     @ManyToOne
@@ -31,7 +31,7 @@ public class Place {
 
     public Place(){}
 
-    public Place(LocalDateTime addedAt, String description, Long id, byte[] image, Lists list, String name) {
+    public Place(LocalDateTime addedAt, String description, Long id, String image, Lists list, String name) {
         this.addedAt = addedAt;
         this.description = description;
         this.id = id;
@@ -71,11 +71,11 @@ public class Place {
         this.id = id;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

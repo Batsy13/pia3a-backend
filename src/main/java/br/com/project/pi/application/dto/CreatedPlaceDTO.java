@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record CreatedPlaceDTO(
         @NotBlank String name,
         @NotBlank String description,
-        byte[] image,
+        @NotBlank String image,
         @NotNull LocalDateTime addedAt
 ) {
     public CreatedPlaceDTO(Place place){
