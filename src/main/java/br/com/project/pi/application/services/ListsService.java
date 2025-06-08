@@ -11,11 +11,11 @@ import br.com.project.pi.application.model.User;
 import br.com.project.pi.application.repositories.ListsRepository;
 import br.com.project.pi.application.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +27,9 @@ public class ListsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     @Transactional
     public List<ListsDTO> findAll() {
@@ -45,7 +48,7 @@ public class ListsService {
                                         place.getId(),
                                         place.getName(),
                                         place.getDescription(),
-                                        place.getImage(),
+                                        place.getImages(),
                                         place.getAddedAt()
                                 ))
                                 .collect(Collectors.toList())
@@ -76,20 +79,40 @@ public class ListsService {
     }
 
     @Transactional
-    public CreatedPlaceDTO createdPlace(CreatedPlaceDTO dto, Long id) {
+    public CreatedPlaceDTO createdPlace(CreatedPlaceDTO dto, Long listId) {
+
         User user = getAuthenticatedUser();
 
-        Lists list = repository.findById(id).orElseThrow(() -> new ExecutionException("Not found id: " + id));
+        Lists list = repository.findById(listId)
+                .orElseThrow(() -> new ListNotFoundException());
 
-        Place place = new Place(dto);
+        List<String> imageUrls = Collections.emptyList();
+        if (dto.images() != null && !dto.images().isEmpty()) {
+            try {
+                String baseFileName = imageUploadService.sanitizeFileName (dto.name());
+                imageUrls = imageUploadService.uploadImages(baseFileName, dto.images());
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
+        }
 
+        Place place = new Place();
+        place.setName(dto.name());
+        place.setDescription(dto.description());
+        place.setAddedAt(dto.addedAt());
+        place.setImages(imageUrls);
         place.setList(list);
 
         list.getPlaces().add(place);
 
         repository.save(list);
 
-        return new CreatedPlaceDTO(place);
+        return new CreatedPlaceDTO(
+                place.getName(),
+                place.getDescription(),
+                place.getImages(),
+                place.getAddedAt()
+        );
     }
 
     public User getAuthenticatedUser() {

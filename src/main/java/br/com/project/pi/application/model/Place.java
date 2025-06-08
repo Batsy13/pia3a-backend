@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,7 +24,10 @@ public class Place {
     private Long id;
     private String name;
     private String description;
-    private String image;
+    @ElementCollection
+    @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
+    @Column(name = "image_url")
+    private List<String> images = new ArrayList<>();
     private LocalDateTime addedAt;
 
     @ManyToOne
@@ -31,11 +36,11 @@ public class Place {
 
     public Place(){}
 
-    public Place(LocalDateTime addedAt, String description, Long id, String image, Lists list, String name) {
+    public Place(LocalDateTime addedAt, String description, Long id, List<String> images, Lists list, String name) {
         this.addedAt = addedAt;
         this.description = description;
         this.id = id;
-        this.image = image;
+        this.images = images;
         this.list = list;
         this.name = name;
     }
@@ -43,7 +48,7 @@ public class Place {
     public Place(@Valid CreatedPlaceDTO dto) {
         this.name = dto.name();
         this.description = dto.description();
-        this.image = dto.image();
+        this.images = dto.images();
         this.addedAt = dto.addedAt();
     }
 
@@ -71,12 +76,12 @@ public class Place {
         this.id = id;
     }
 
-    public String getImage() {
-        return image;
+    public List<String> getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
     public Lists getList() {
