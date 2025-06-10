@@ -32,8 +32,12 @@ public class ListsService {
     private ImageUploadService imageUploadService;
 
     @Transactional
-    public List<ListsDTO> findAll() {
-        var lists = repository.findAll();
+    public List<ListsDTO> findAllByUserIdWithPlaces() {
+
+        User user = getAuthenticatedUser();
+
+        var lists = repository.findAllByUserIdWithPlaces(user.getId());
+
 
         if (lists.isEmpty()) {
             throw new ListsNotFoundException();
@@ -58,8 +62,13 @@ public class ListsService {
 
     @Transactional
     public ListsDTO findById(Long id) {
+        User user = getAuthenticatedUser();
+
         Lists list = repository.findById(id)
                 .orElseThrow(ListNotFoundException::new);
+        if(!list.getUser().getId().equals(user.getId())){
+            throw new AccessDeniedViewListException();
+        }
         return new ListsDTO(list);
     }
 
@@ -85,6 +94,10 @@ public class ListsService {
 
         Lists list = repository.findById(listId)
                 .orElseThrow(() -> new ListNotFoundException());
+
+        if(!list.getUser().getId().equals(user.getId())){
+            throw new AccessDeniedViewListException();
+        }
 
         List<String> imageUrls = Collections.emptyList();
         if (dto.images() != null && !dto.images().isEmpty()) {

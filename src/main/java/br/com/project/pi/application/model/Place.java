@@ -24,8 +24,6 @@ public class Place {
     private Long id;
     private String name;
     private String description;
-    @ElementCollection
-    @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "image_url")
     private List<String> images = new ArrayList<>();
     private LocalDateTime addedAt;
