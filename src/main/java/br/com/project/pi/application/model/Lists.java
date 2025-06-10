@@ -57,7 +57,7 @@ public class Lists {
                 Place place = new Place();
                 place.setName(p.name());
                 place.setDescription(p.description());
-                place.setImage(p.image());
+                place.setImages(p.images());
                 place.setAddedAt(p.addedAt());
                 place.setList(this);
                 return place;

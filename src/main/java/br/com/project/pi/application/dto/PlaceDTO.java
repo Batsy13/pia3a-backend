@@ -5,12 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record PlaceDTO(
         @NotNull Long id,
         @NotBlank String name,
         @NotBlank String description,
-        @NotNull byte[] image,
+        @NotNull List<String> images,
         @NotNull LocalDateTime addedAt
 ) {
     public PlaceDTO(Place place) {
@@ -18,7 +19,7 @@ public record PlaceDTO(
                 place.getId(),
                 place.getName(),
                 place.getDescription(),
-                place.getImage(),
+                place.getImages(),
                 place.getAddedAt());
     }
 }

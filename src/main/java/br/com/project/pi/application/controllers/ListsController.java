@@ -17,8 +17,8 @@ public class ListsController {
     private ListsService service;
 
     @GetMapping
-    public ResponseEntity findAll() {
-        var list = service.findAll();
+    public ResponseEntity findAllByUserIdWithPlaces() {
+        var list = service.findAllByUserIdWithPlaces();
         return ResponseEntity.ok(list);
     }
 
