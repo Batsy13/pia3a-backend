@@ -27,10 +27,7 @@ public class SecutiryFilter extends OncePerRequestFilter {
 
     private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList(
             "/api/auth/register",
-            "/api/auth/login",
-            "/place",
-            "/lists",
-            "/lists/{id}"
+            "/api/auth/login"
     );
 
     @Autowired
