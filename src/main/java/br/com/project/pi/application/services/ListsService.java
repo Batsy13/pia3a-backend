@@ -39,9 +39,6 @@ public class ListsService {
         var lists = repository.findAllByUserIdWithPlaces(user.getId());
 
 
-        if (lists.isEmpty()) {
-            throw new ListsNotFoundException();
-        }
         return lists.stream()
                 .map(list -> new ListsDTO(
                         list.getId(),
