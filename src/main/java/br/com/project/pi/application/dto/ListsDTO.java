@@ -10,7 +10,7 @@ public record ListsDTO(
         @NotNull Long id,
         @NotBlank String name,
         @NotBlank String icon,
-        @NotBlank java.util.List<PlaceDTO> place) {
+        @NotBlank java.util.List<PlaceDTO> places) {
 
     public ListsDTO(Lists list) {
         this(

@@ -8,7 +8,7 @@ import java.util.List;
 public record CreatedListRequestDTO(
         @NotBlank String name,
         @NotBlank String icon,
-        List<CreatedListPlaceDTO> place
+        List<CreatedListPlaceDTO> places
 ) {
     public CreatedListRequestDTO(Lists list) {
         this(list.getName(), list.getIcon(),

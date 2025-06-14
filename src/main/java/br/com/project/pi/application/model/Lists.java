@@ -52,8 +52,8 @@ public class Lists {
     public Lists(CreatedListRequestDTO list) {
         this.name = list.name();
         this.icon = list.icon();
-        if(list.place() != null){
-            this.places = list.place().stream().map(p -> {
+        if(list.places() != null){
+            this.places = list.places().stream().map(p -> {
                 Place place = new Place();
                 place.setName(p.name());
                 place.setDescription(p.description());
